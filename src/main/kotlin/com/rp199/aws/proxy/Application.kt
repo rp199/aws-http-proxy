@@ -18,8 +18,8 @@ import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider
 import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider
 import software.amazon.awssdk.auth.signer.AsyncAws4Signer
 
-fun main(args: Array<String>) {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+fun main() {
+    embeddedServer(Netty, port = 8888, host = "0.0.0.0") {
         configureRouting()
         configureMonitoring()
         kodein {

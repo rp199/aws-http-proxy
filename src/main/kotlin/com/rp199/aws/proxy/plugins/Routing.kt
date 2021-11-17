@@ -16,8 +16,11 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import java.net.URI
 
+// This should be changed to the API gateway endpoint.
+// Should be moved to an external property or add a new argument for it in the future
 const val defaultPath = "https://some-endpoint.com"
 val unsafeHeaders = listOf("Content-Type", "Content-Length").map { it.lowercase() }
+const val signRequest = true
 
 fun Application.configureRouting() {
     install(Locations) {
@@ -36,7 +39,10 @@ fun Application.configureRouting() {
                         val targetPath = "$defaultPath$path$queryString"
                         val inboundBody = call.receiveText().takeUnless { it.isBlank() }
 
-                        val signedHeaders = signer.sign(inboundRequestMethod, URI.create(targetPath), inboundBody)
+                        val signedHeaders = if (signRequest) {
+                            signer.sign(inboundRequestMethod, URI.create(targetPath), inboundBody)
+                        } else Headers.Empty
+
                         val response: HttpResponse = client.request(targetPath) {
                             method = inboundRequestMethod
                             headers {
